@@ -9,18 +9,27 @@
 	<beans>
 
 		<bean id="pdxSerializer" class="com.gemstone.gemfire.pdx.ReflectionBasedAutoSerializer">
-			<constructor-arg value="io.pivotal.fe.gemfire.serialization.model.*" />
+			<constructor-arg type="boolean" value="true"/>
+			<constructor-arg value="io.pivotal.fe.gemfire.serialization.domain.*" />
 		</bean>
 
 		<util:properties id="gemfire-props">
 			<prop key="log-level">fine</prop>
 		</util:properties>
+		
+		<bean id="mappingContext" class="org.springframework.data.gemfire.mapping.GemfireMappingContext"/>
 
 		<gfe:client-cache pdx-persistent="false"
 			pdx-read-serialized="false" pdx-serializer-ref="mappingPdxSerializerVersioned"
 			pool-name="gemfirePool" properties-ref="gemfire-props" />
 
-		<bean id="mappingPdxSerializerVersioned" class="org.springframework.data.gemfire.mapping.MappingPdxSerializer" />
+		<bean id="mappingPdxSerializerVersioned" class="org.springframework.data.gemfire.mapping.MappingPdxSerializer">
+			<property name="customSerializers">
+			 <util:map>
+			 	<entry key="#{T(java.util.SimpleTimeZone)}" value-ref="pdxSerializer"/>
+			 </util:map>
+			</property>
+		</bean>
 
 		<gfe:pool id="gemfirePool" subscription-enabled="false">
 			<gfe:locator port="10300" host="localhost" />
