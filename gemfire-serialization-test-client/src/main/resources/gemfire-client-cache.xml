@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:gfe="http://www.springframework.org/schema/gemfire"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd
+		http://www.springframework.org/schema/gemfire http://www.springframework.org/schema/gemfire/spring-gemfire-1.5.xsd">
+
+	<beans>
+
+		<bean id="pdxSerializer" class="com.gemstone.gemfire.pdx.ReflectionBasedAutoSerializer">
+			<constructor-arg value="io.pivotal.fe.gemfire.serialization.model.*" />
+		</bean>
+
+		<util:properties id="gemfire-props">
+			<prop key="log-level">fine</prop>
+		</util:properties>
+
+		<gfe:client-cache pdx-persistent="false"
+			pdx-read-serialized="false" pdx-serializer-ref="mappingPdxSerializerVersioned"
+			pool-name="gemfirePool" properties-ref="gemfire-props" />
+
+		<bean id="mappingPdxSerializerVersioned" class="org.springframework.data.gemfire.mapping.MappingPdxSerializer" />
+
+		<gfe:pool id="gemfirePool" subscription-enabled="false">
+			<gfe:locator port="10300" host="localhost" />
+		</gfe:pool>
+
+		<gfe:client-region id="customer" shortcut="PROXY" pool-name="gemfirePool" persistent="false" />
+
+	</beans>
+
+</beans>
