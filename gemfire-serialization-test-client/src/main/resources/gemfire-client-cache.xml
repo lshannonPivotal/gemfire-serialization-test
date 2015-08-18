@@ -24,11 +24,13 @@
 			pool-name="gemfirePool" properties-ref="gemfire-props" />
 
 		<bean id="mappingPdxSerializerVersioned" class="org.springframework.data.gemfire.mapping.MappingPdxSerializer">
+		<!-- 
 			<property name="customSerializers">
 			 <util:map>
 			 	<entry key="#{T(java.util.SimpleTimeZone)}" value-ref="pdxSerializer"/>
 			 </util:map>
 			</property>
+		 -->
 		</bean>
 
 		<gfe:pool id="gemfirePool" subscription-enabled="false">
